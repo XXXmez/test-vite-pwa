@@ -9,11 +9,9 @@ export function UpdateAppButton() {
         return null;
     }
 
-    const [needRefresh, setNeedRefresh] = registration.needRefresh;
+    const [needRefresh] = registration.needRefresh;
 
     const handleUpdate = async () => {
-        registration.updateServiceWorker();
-        setNeedRefresh(false);
         window.location.reload();
     };
 
