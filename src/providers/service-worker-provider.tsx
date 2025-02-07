@@ -1,6 +1,7 @@
 import React, { createContext, PropsWithChildren, useContext, useEffect } from 'react';
 // @ts-ignore
 import { useRegisterSW } from 'virtual:pwa-register/react';
+import {UpdateAppButton} from "../update-app-button.tsx";
 type RegisterSwState = ReturnType<typeof useRegisterSW>;
 
 /**
@@ -79,7 +80,7 @@ export function ServiceWorkerProvider(props: PropsWithChildren) {
         <ServiceWorkerRegistrationContext.Provider value={sw}>
             {props.children}
             {needRefresh && isOpenUpdateNotification && (
-                <div onClick={() => handleCloseUpdateNotification()} style={{position:'absolute', top:0, left:0}}>Обновите страницу (F5) для использования актуальной версии.</div>
+                <div onClick={() => handleCloseUpdateNotification()} style={{position:'absolute', top:0, left:0}}>Обновите страницу (F5) для использования актуальной версии. <UpdateAppButton /></div>
             )}
         </ServiceWorkerRegistrationContext.Provider>
     );
