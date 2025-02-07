@@ -12,7 +12,7 @@ export function UpdateAppButton() {
     const [needRefresh] = registration.needRefresh;
 
     const handleUpdate = async () => {
-        window.location.reload();
+        registration.updateServiceWorker(true).then()
     };
 
     return (
