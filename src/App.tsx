@@ -7,8 +7,8 @@ const About = lazy(() => import("./pages/About"));
 
 function App() {
     return (
-        <PwaChunkErrorHandler>
-            <Router>
+        <Router>
+            <PwaChunkErrorHandler>
                 <nav>
                     <Link to="/">Home</Link>
                     <Link to="/about">About</Link>
@@ -20,8 +20,8 @@ function App() {
                         <Route path="/appUpdate" element={<div>appUpdate</div>} />
                     </Routes>
                 </Suspense>
-            </Router>
-        </PwaChunkErrorHandler>
+            </PwaChunkErrorHandler>
+        </Router>
     );
 }
 
