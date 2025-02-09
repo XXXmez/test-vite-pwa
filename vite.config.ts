@@ -62,7 +62,7 @@ export default defineConfig({
             },
           },
         ],
-        skipWaiting: true,
+        // skipWaiting: true,
         clientsClaim: true
       },
 
