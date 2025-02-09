@@ -62,7 +62,10 @@ export default defineConfig({
             },
           },
         ],
+        skipWaiting: true,
+        clientsClaim: true
       },
+
       manifest: {
         name: 'ЛПЦ3',
         short_name: 'ЛПЦ3',
