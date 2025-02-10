@@ -44,7 +44,8 @@ export function PwaChunkErrorHandler({ children }: { children: React.ReactNode }
                 //     })
                 // })
             }
-            nav('appUpdate', { state: { prevUrl: currentPath, relative: 'route' } });
+            // nav('appUpdate', { state: { prevUrl: currentPath, relative: 'route' } });
+            window.location.reload();
             event.preventDefault();
 
         };
