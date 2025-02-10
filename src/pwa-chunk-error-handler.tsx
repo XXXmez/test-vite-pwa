@@ -38,12 +38,14 @@ export function PwaChunkErrorHandler({ children }: { children: React.ReactNode }
             console.log('isPrevLastPath', isPrevLastPath)
 
             if (isPrevLastPath) {
-                registration.updateServiceWorker().then(() => {
-                    caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key)))).then(() => {
-                        window.location.reload();
-                    })
-                })
+                // registration.updateServiceWorker().then(() => {
+                //     caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key)))).then(() => {
+                //         window.location.reload();
+                //     })
+                // })
             }
+            nav('appUpdate', { state: { prevUrl: currentPath, relative: 'route' } });
+            event.preventDefault();
 
         };
 
