@@ -1,11 +1,11 @@
 import {Link, Outlet} from "react-router-dom";
-import {PwaChunkErrorHandler} from "../pwa-chunk-error-handler.tsx";
+// import {PwaChunkErrorHandler} from "../pwa-chunk-error-handler.tsx";
 
 export function Layout() {
     // const navigation = useNavigation();
 
     return (
-        <PwaChunkErrorHandler>
+        // <PwaChunkErrorHandler>
             <div style={{
                 display: 'flex', flexDirection: 'column'
             }}>
@@ -17,6 +17,6 @@ export function Layout() {
                 </nav>
                 <Outlet />
             </div>
-        </PwaChunkErrorHandler>
+        // </PwaChunkErrorHandler>
     )
 }
