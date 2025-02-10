@@ -52,7 +52,8 @@ const router = createBrowserRouter([
                 }
             }
         ],
-        errorElement: <div>errorElement errorElement errorElement</div>
+        // ErrorBoundary:
+        // errorElement: <div>errorElement errorElement errorElement</div>
     }
 ])
 
