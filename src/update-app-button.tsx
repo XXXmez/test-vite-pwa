@@ -12,10 +12,14 @@ export function UpdateAppButton() {
     const [needRefresh] = registration.needRefresh;
 
     const handleUpdate = async () => {
+        console.log(1)
         await registration.updateServiceWorker();
-        // await caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key))));
-        // registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-        // window.location.reload();
+        console.log(2)
+        await caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key))));
+        console.log(3)
+        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        console.log(4)
+        window.location.reload();
     };
 
     return (
