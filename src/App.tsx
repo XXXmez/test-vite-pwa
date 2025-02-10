@@ -5,10 +5,8 @@ import {Layout} from "./pages/layout.tsx";
 export function lazyWithErrorHandler<T extends React.ComponentType<any>>(importFn: () => Promise<{ default: T }>) {
     return lazy(() =>
         importFn().catch((error) => {
-            console.error("Ошибка загрузки чанка:", error);
-            if (error.message.includes("Loading chunk") || error.message.includes("failed to fetch")) {
-                window.location.href = 'appUpdate'
-            }
+            console.log("Ошибка загрузки чанка:", error);
+
             return Promise.reject(error);
         })
     );
