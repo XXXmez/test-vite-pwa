@@ -47,6 +47,7 @@ export function PwaChunkErrorHandler({ children }: { children: React.ReactNode }
 
         return () => {
             window.removeEventListener('vite:preloadError', handleError as EventListener);
+            window.removeEventListener('error', handleError2);
         };
     }, [nav]);
 
