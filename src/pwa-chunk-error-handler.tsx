@@ -36,7 +36,8 @@ export function PwaChunkErrorHandler({ children }: { children: React.ReactNode }
             console.log('isPrevLastPath', isPrevLastPath)
 
             if (isPrevLastPath) {
-                nav('appUpdate', { state: { prevUrl: currentPath, relative: 'route' } });
+                console.log('Навигация на страницу обновления');
+                window.location.href = '/appUpdate';
                 event.preventDefault();
             }
 
