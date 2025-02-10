@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-
 export function PwaChunkErrorHandler({ children }: { children: React.ReactNode }) {
     const nav = useNavigate();
 
