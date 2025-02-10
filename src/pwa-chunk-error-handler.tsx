@@ -1,11 +1,11 @@
 import React, {useEffect, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
-import {useServiceWorkerRegistration} from "./providers/service-worker-provider.tsx";
+// import {useServiceWorkerRegistration} from "./providers/service-worker-provider.tsx";
 
 export function PwaChunkErrorHandler({ children }: { children: React.ReactNode }) {
     const nav = useNavigate();
     const refLastVisitedPaths = useRef<string[]>([])
-    const registration = useServiceWorkerRegistration();
+    // const registration = useServiceWorkerRegistration();
 
     console.log('ChunkErrorBoundary pwa-10.8');
 
