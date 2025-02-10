@@ -9,18 +9,17 @@ export function PwaChunkErrorHandler({ children }: { children: React.ReactNode }
 
     useEffect(() => {
         const handleError = (event: ErrorEvent) => {
-            const LastPathname = window.location.pathname;
+            const currentPath = window.location.pathname;
 
-            console.log('LastPathname', LastPathname)
+            console.log('currentPath1', currentPath)
             console.log('Возникла ошибка vite:preloadError', event);
             console.log('event.type === vite:preloadError', event.type === 'vite:preloadError');
 
             // loggerInstance.error('ChunkErrorBoundary1 Возникла ошибка при переходе на страницу', event);
 
             if (event.type === 'vite:preloadError') {
-                refLastVisitedPaths.current.push(LastPathname)
-                const currentPath = window.location.pathname;
-                console.log('currentPath', currentPath)
+                refLastVisitedPaths.current.push(currentPath)
+                console.log('currentPath2', currentPath)
                 nav('appUpdate', { state: { prevUrl: currentPath, relative: 'route' } });
                 event?.preventDefault();
             }
@@ -28,9 +27,16 @@ export function PwaChunkErrorHandler({ children }: { children: React.ReactNode }
 
         const handleError2 = (event: ErrorEvent) => {
             console.log('Возникла ошибка загрузки чанка:', event);
-            const LastPathname = window.location.pathname;
-            if (refLastVisitedPaths.current.some((path => path === LastPathname))) {
-                nav('appUpdate', { state: { prevUrl: LastPathname, relative: 'route' } });
+            const currentPath = window.location.pathname;
+            console.log('currentPath3', currentPath)
+            console.log('refLastVisitedPaths.current', refLastVisitedPaths.current)
+
+            const isPrevLastPath = refLastVisitedPaths.current.some((path => path === currentPath))
+
+            console.log('isPrevLastPath', isPrevLastPath)
+
+            if (isPrevLastPath) {
+                nav('appUpdate', { state: { prevUrl: currentPath, relative: 'route' } });
             }
 
         };
