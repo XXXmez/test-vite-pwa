@@ -17,9 +17,8 @@ export function UpdateAppButton() {
         console.log(2)
         await caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key))));
         console.log(3)
-        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-        console.log(4)
         window.location.reload();
+        console.log(4)
     };
 
     return (
