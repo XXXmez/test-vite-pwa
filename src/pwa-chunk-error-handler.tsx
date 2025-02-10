@@ -1,9 +1,11 @@
 import React, {useEffect, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
+import {useServiceWorkerRegistration} from "./providers/service-worker-provider.tsx";
 
 export function PwaChunkErrorHandler({ children }: { children: React.ReactNode }) {
     const nav = useNavigate();
     const refLastVisitedPaths = useRef<string[]>([])
+    const registration = useServiceWorkerRegistration();
 
     console.log('ChunkErrorBoundary pwa-10.8');
 
@@ -36,9 +38,11 @@ export function PwaChunkErrorHandler({ children }: { children: React.ReactNode }
             console.log('isPrevLastPath', isPrevLastPath)
 
             if (isPrevLastPath) {
-                console.log('Навигация на страницу обновления');
-                window.location.href = '/appUpdate';
-                event.preventDefault();
+                registration.updateServiceWorker().then(() => {
+                    caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key)))).then(() => {
+                        window.location.reload();
+                    })
+                })
             }
 
         };
