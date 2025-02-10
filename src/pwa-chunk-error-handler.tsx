@@ -8,7 +8,7 @@ export function PwaChunkErrorHandler({ children }: { children: React.ReactNode }
 
     useEffect(() => {
         const handleError = (event: ErrorEvent) => {
-            console.log('Возникла ошибка vite:preloadError');
+            console.log('Возникла ошибка vite:preloadError', event);
             console.log('event.type === vite:preloadError', event.type === 'vite:preloadError');
 
             // loggerInstance.error('ChunkErrorBoundary1 Возникла ошибка при переходе на страницу', event);

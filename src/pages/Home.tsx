@@ -1,3 +1,3 @@
 export default function Home() {
-    return <h1>Welcome to Home Page v2.30</h1>;
+    return <h1>Welcome to Home Page v2.31</h1>;
 }
