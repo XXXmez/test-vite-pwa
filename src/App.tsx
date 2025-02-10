@@ -2,15 +2,23 @@ import {lazy} from "react";
 import {RouterProvider, createBrowserRouter} from "react-router-dom";
 import {Layout} from "./pages/layout.tsx";
 
-// export function lazyWithErrorHandler<T extends React.ComponentType<any>>(importFn: () => Promise<{ default: T }>) {
-//     return lazy(() =>
-//         importFn().catch((error) => {
-//             console.log("Ошибка загрузки чанка:", error);
-//
-//             return Promise.reject(error);
-//         })
-//     );
-// }
+export function lazyWithErrorHandler<T extends React.ComponentType<any>>(
+    importFn: () => Promise<{ default: T }>
+) {
+    return lazy(() =>
+        importFn().catch((error) => {
+            console.error('Ошибка загрузки чанка:', error);
+
+            window.location.href = '/appUpdate';
+
+            return Promise.resolve({
+                // @ts-ignore
+                default: (() => <div>Ошибка загрузки страницы</div>) as T
+            });
+        })
+    );
+}
+
 
 const router = createBrowserRouter([
     {
@@ -32,8 +40,9 @@ const router = createBrowserRouter([
             {
                 path: '/about',
                 async lazy() {
-                    const About = lazy(() => import("./pages/About"));
-                    // const About = lazyWithErrorHandler(() => import("./pages/About"));
+
+                    // const About = lazy(() => import("./pages/About"));
+                    const About = lazyWithErrorHandler(() => import("./pages/About"));
                     return {
                         Component: () => (
                             <About />

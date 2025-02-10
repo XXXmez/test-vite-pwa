@@ -24,22 +24,22 @@ export function PwaChunkErrorHandler({ children }: { children: React.ReactNode }
 
         const handleError2 = (event: ErrorEvent) => {
             console.log('Возникла непредвиденная ошибка:', event);
-            const currentPath = window.location.pathname;
-            console.log('currentPath3', currentPath)
-            console.log('refLastVisitedPaths.current', refLastVisitedPaths.current)
-
-            const isPrevLastPath = refLastVisitedPaths.current.some((path => path === currentPath))
-
-            console.log('isPrevLastPath', isPrevLastPath)
-
-            if (isPrevLastPath) {
-                // registration.updateServiceWorker().then(() => {
-                //     caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key)))).then(() => {
-                //         window.location.reload();
-                //     })
-                // })
-
-            }
+            // const currentPath = window.location.pathname;
+            // console.log('currentPath3', currentPath)
+            // console.log('refLastVisitedPaths.current', refLastVisitedPaths.current)
+            //
+            // const isPrevLastPath = refLastVisitedPaths.current.some((path => path === currentPath))
+            //
+            // console.log('isPrevLastPath', isPrevLastPath)
+            //
+            // if (isPrevLastPath) {
+            //     // registration.updateServiceWorker().then(() => {
+            //     //     caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key)))).then(() => {
+            //     //         window.location.reload();
+            //     //     })
+            //     // })
+            //
+            // }
             // nav('appUpdate', { state: { prevUrl: currentPath, relative: 'route' } });
             // window.location.reload();
             // event.preventDefault();
@@ -51,7 +51,7 @@ export function PwaChunkErrorHandler({ children }: { children: React.ReactNode }
 
         return () => {
             window.removeEventListener('vite:preloadError', handleError as EventListener);
-            // window.removeEventListener('error', handleError2);
+            window.removeEventListener('error', handleError2);
         };
     }, [nav]);
 
