@@ -21,7 +21,7 @@ export function PwaChunkErrorHandler({ children }: { children: React.ReactNode }
                 refLastVisitedPaths.current.push(currentPath)
                 console.log('currentPath2', currentPath)
                 nav('appUpdate', { state: { prevUrl: currentPath, relative: 'route' } });
-                event?.preventDefault();
+                event.preventDefault();
             }
         };
 
@@ -37,6 +37,7 @@ export function PwaChunkErrorHandler({ children }: { children: React.ReactNode }
 
             if (isPrevLastPath) {
                 nav('appUpdate', { state: { prevUrl: currentPath, relative: 'route' } });
+                event.preventDefault();
             }
 
         };
