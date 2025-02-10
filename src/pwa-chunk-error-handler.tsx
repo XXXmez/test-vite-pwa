@@ -20,7 +20,13 @@ export function PwaChunkErrorHandler({ children }: { children: React.ReactNode }
             }
         };
 
+        const handleError2 = (event: ErrorEvent) => {
+            console.log('Возникла ошибка загрузки чанка:', event);
+
+        };
+
         window.addEventListener('vite:preloadError', handleError as EventListener);
+        window.addEventListener('error', handleError2);
 
         return () => {
             window.removeEventListener('vite:preloadError', handleError as EventListener);
