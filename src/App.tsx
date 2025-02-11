@@ -9,7 +9,7 @@ export function lazyWithErrorHandler<T extends React.ComponentType<any>>(
         importFn().catch((error) => {
             console.error('Ошибка загрузки чанка:', error);
 
-            window.location.href = '/appUpdate';
+            // window.location.href = '/appUpdate';
 
             return Promise.resolve({
                 // @ts-ignore
@@ -62,7 +62,7 @@ const router = createBrowserRouter([
             }
         ],
         // ErrorBoundary:
-        // errorElement: <div>errorElement errorElement errorElement</div>
+        errorElement: <div>errorElement errorElement errorElement</div>
     }
 ])
 
