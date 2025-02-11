@@ -1,6 +1,7 @@
 import {lazy} from "react";
 import {RouterProvider, createBrowserRouter} from "react-router-dom";
 import {Layout} from "./pages/layout.tsx";
+import {DynamicSVG} from "./pages/DynamicSVG.tsx";
 
 export function lazyWithErrorHandler<T extends React.ComponentType<any>>(
     importFn: () => Promise<{ default: T }>
@@ -59,9 +60,7 @@ const router = createBrowserRouter([
             {
                 path: '/dynamicSVG',
                 Component: () => (
-                    <div>
-                        <h2>Динамическая SVG</h2>
-                    </div>
+                    <DynamicSVG />
                 )
             }
         ],
