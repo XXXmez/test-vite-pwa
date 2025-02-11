@@ -52,13 +52,17 @@ const router = createBrowserRouter([
             },
             {
                 path: '/appUpdate',
-                async lazy() {
-                    return {
-                        Component: () => (
-                            <div>Страница обновления приложения</div>
-                        )
-                    }
-                }
+                Component: () => (
+                    <div>Страница обновления приложения</div>
+                )
+            },
+            {
+                path: '/dynamicSVG',
+                Component: () => (
+                    <div>
+                        <h2>Динамическая SVG</h2>
+                    </div>
+                )
             }
         ],
         // ErrorBoundary:

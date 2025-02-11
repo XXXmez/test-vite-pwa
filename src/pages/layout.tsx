@@ -14,6 +14,7 @@ export function Layout() {
                 }}>
                     <Link to="/">Home</Link>
                     <Link to="/about">About</Link>
+                    <Link to="/dynamicSVG">Dynamic SVG</Link>
                 </nav>
                 <Outlet />
             </div>
