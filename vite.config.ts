@@ -13,7 +13,9 @@ const CACHE_MAX_AGE_SECONDS = 7 * 24 * 60 * 60;
 export default defineConfig({
   plugins: [
       react(),
-      svgr(),
+      svgr({
+        include: "**/*.svg?react",
+      }),
       VitePWA({
       registerType: 'prompt',
       injectRegister: 'inline',
