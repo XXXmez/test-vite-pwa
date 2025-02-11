@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa';
 import checker from "vite-plugin-checker";
+import svgr from 'vite-plugin-svgr';
 
 /**
  * Возвращает максимальное время хранения кэша (в секундах).
@@ -10,8 +11,10 @@ const CACHE_MAX_AGE_SECONDS = 7 * 24 * 60 * 60;
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(),
-    VitePWA({
+  plugins: [
+      react(),
+      svgr(),
+      VitePWA({
       registerType: 'prompt',
       injectRegister: 'inline',
       workbox: {
@@ -76,7 +79,7 @@ export default defineConfig({
         start_url: './',
       },
     }),
-    checker({
+      checker({
       typescript: true,
     }),],
 })
