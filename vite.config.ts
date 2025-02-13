@@ -20,8 +20,8 @@ export default defineConfig({
       registerType: 'prompt',
       injectRegister: 'inline',
       workbox: {
-        navigateFallback: null,
-        globPatterns: ['**/*.{woff,woff2}'],
+        navigateFallback: '/index.html',
+        globPatterns: ['**/*.{woff,woff2}', '/', '/index.html'],
         additionalManifestEntries: [
           // Добавлено для предотвращения кэширования sw.js
           { url: '/sw.js', revision: `${Date.now()}` },
