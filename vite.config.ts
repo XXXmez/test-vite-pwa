@@ -20,7 +20,6 @@ export default defineConfig({
       registerType: 'prompt',
       injectRegister: 'inline',
       workbox: {
-        navigateFallback: '/',
         globPatterns: ['**/*.{woff,woff2}', '/', '/index.html'],
         additionalManifestEntries: [
           // Добавлено для предотвращения кэширования sw.js
