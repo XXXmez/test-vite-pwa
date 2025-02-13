@@ -1,5 +1,5 @@
 import {lazy} from "react";
-import {RouterProvider, createBrowserRouter} from "react-router-dom";
+import {RouterProvider, createBrowserRouter, } from "react-router-dom";
 import {Layout} from "./pages/layout.tsx";
 import {DynamicSVG} from "./pages/DynamicSVG.tsx";
 
@@ -69,7 +69,7 @@ const router = createBrowserRouter([
 
 function App() {
     return (
-        <RouterProvider router={router}   />
+        <RouterProvider router={router} />
     );
 }
 
