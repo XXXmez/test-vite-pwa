@@ -64,8 +64,6 @@ const router = createBrowserRouter([
                 )
             }
         ],
-        // ErrorBoundary:
-        errorElement: <div>errorElement errorElement errorElement</div>
     }
 ])
 
