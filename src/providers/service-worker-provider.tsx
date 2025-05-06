@@ -18,33 +18,50 @@ export function useServiceWorkerRegistration() {
     return useContext(ServiceWorkerRegistrationContext);
 }
 
-// async function waitForWaitingSW(registration: ServiceWorkerRegistration): Promise<void> {
-//     if (registration.waiting) {
-//         registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-//         return Promise.resolve();
-//     }
-//
-//     return new Promise<void>((resolve) => {
-//         const onUpdateFound = () => {
-//             const newSW = registration.installing;
-//             if (!newSW) {
-//                 return;
-//             }
-//             newSW.addEventListener('statechange', () => {
-//                 if (newSW.state === 'installed' && registration.waiting) {
-//                     registration.waiting!.postMessage({ type: 'SKIP_WAITING' });
-//                     resolve();
-//                 }
-//             });
-//         };
-//
-//         registration.addEventListener('updatefound', onUpdateFound);
-//
-//         navigator.serviceWorker.addEventListener('controllerchange', () => {
-//             resolve();
-//         });
-//     });
-// }
+async function checkingAppVersionByInit(swUrl: string, registration: ServiceWorkerRegistration) {
+    try {
+        console.log('Проверка обновлений при старте приложения');
+        const resp = await fetch(swUrl, {
+            cache: 'no-store',
+            headers: {
+                cache: 'no-store',
+                'cache-control': 'no-cache',
+            },
+        });
+
+        if (resp?.status === 200) {
+            await registration.update();
+
+            if (registration.waiting) {
+                console.log('Обновление уже доступно, активируем его');
+                registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                await caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key))));
+                window.location.reload();
+                return;
+            }
+            if (registration.installing) {
+                console.log('Установка нового сервис-воркера в процессе, ждем завершения');
+                await new Promise((resolve) => {
+                    registration.installing?.addEventListener('statechange', (event) => {
+                        // @ts-ignore
+                        if (event.target?.state === 'installed' && registration.waiting) {
+                            console.log('Новый сервис-воркер установлен, активируем его');
+                            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                            // @ts-ignore
+                            resolve();
+                        }
+                    });
+                });
+                await caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key))));
+                window.location.reload();
+                return;
+            }
+            console.log('Обновление не требуется');
+        }
+    } catch (e) {
+        console.error('Ошибка при проверке обновлений при старте приложения:', e);
+    }
+}
 
 /**
  * Представляет компонент, создающий контекст состояния для управления service worker.
@@ -60,65 +77,7 @@ export function ServiceWorkerProvider(props: PropsWithChildren) {
         // @ts-ignore
         onRegisteredSW(swUrl, registration) {
             if (registration) {
-                // (async () => {
-                //     try {
-                //         console.log('Попытка обновления приложения при ините');
-                //
-                //         const resp = await fetch(swUrl, {
-                //             cache: 'no-store',
-                //             headers: {
-                //                 cache: 'no-store',
-                //                 'cache-control': 'no-cache',
-                //             },
-                //         });
-                //
-                //         console.log('Подгрузили SW', resp);
-                //
-                //         if (resp?.status === 200) {
-                //             console.log('Прошли проверку статуса загрузки sw и обновили registration');
-                //
-                //             await registration.update();
-                //
-                //             console.log('Регистрация SW', registration);
-                //             console.log('Статус SW', registration.waiting);
-                //
-                //             await waitForWaitingSW(registration);
-                //
-                //             await registration.updateServiceWorker();
-                //             const keys = await caches.keys();
-                //             await Promise.all(keys.map((k) => caches.delete(k)));
-                //             // eslint-disable-next-line no-restricted-globals
-                //             location.reload();
-                //         }
-                //     } catch (e) {
-                //         console.log('Ошибка при initial update-check', e)
-                //     }
-                // })()
-
-                (async () => {
-                    try {
-                        console.log('Попытка обновления приложения при ините');
-                        const resp = await fetch(swUrl, {
-                            cache: 'no-store',
-                            headers: {
-                                cache: 'no-store',
-                                'cache-control': 'no-cache',
-                            },
-                        });
-
-                        if (resp?.status === 200) {
-                            await registration.update();
-                            if (registration.waiting) {
-                                console.log('Обновление доступно при инициализации, применяем его');
-                                await registration.updateServiceWorker();
-                                await caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key))));
-                                location.reload();
-                            }
-                        }
-                    } catch (e) {
-                        console.log('Ошибка при initial update-check', e)
-                    }
-                })();
+                checkingAppVersionByInit(swUrl, registration)
 
                 setInterval(async () => {
                     try {

@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
@@ -8,9 +7,7 @@ import {ErrorHandler} from "./error-handler.tsx";
 createRoot(document.getElementById('root')!).render(
     <ServiceWorkerProvider>
         <ErrorHandler>
-            <StrictMode>
-                <App />
-            </StrictMode>
+            <App />
         </ErrorHandler>
     </ServiceWorkerProvider>,
 )
