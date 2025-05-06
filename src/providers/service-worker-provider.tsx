@@ -95,6 +95,31 @@ export function ServiceWorkerProvider(props: PropsWithChildren) {
                 //     }
                 // })()
 
+                (async () => {
+                    try {
+                        console.log('Попытка обновления приложения при ините');
+                        const resp = await fetch(swUrl, {
+                            cache: 'no-store',
+                            headers: {
+                                cache: 'no-store',
+                                'cache-control': 'no-cache',
+                            },
+                        });
+
+                        if (resp?.status === 200) {
+                            await registration.update();
+                            if (registration.waiting) {
+                                console.log('Обновление доступно при инициализации, применяем его');
+                                await registration.updateServiceWorker();
+                                await caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key))));
+                                location.reload();
+                            }
+                        }
+                    } catch (e) {
+                        console.log('Ошибка при initial update-check', e)
+                    }
+                })();
+
                 setInterval(async () => {
                     try {
                         // Код взят из мануала https://vite-pwa-org.netlify.app/guide/periodic-sw-updates.html.
