@@ -43,6 +43,11 @@ async function checkingAppVersionByInit(swUrl: string, registration: ServiceWork
                 console.log('Установка нового сервис-воркера в процессе, ждем завершения');
                 await new Promise((resolve) => {
                     registration.installing?.addEventListener('statechange', (event) => {
+
+                        console.log('event', event)
+                        console.log('event.target', event.target)
+                        // @ts-ignore
+                        console.log('event.target?.state', event.target?.state)
                         // @ts-ignore
                         if (event.target?.state === 'installed' && registration.waiting) {
                             console.log('Новый сервис-воркер установлен, активируем его');
