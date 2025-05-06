@@ -60,41 +60,40 @@ export function ServiceWorkerProvider(props: PropsWithChildren) {
         // @ts-ignore
         onRegisteredSW(swUrl, registration) {
             if (registration) {
-                (async () => {
-                    try {
-                        console.log('Попытка обновления приложения при ините');
-
-                        const resp = await fetch(swUrl, {
-                            cache: 'no-store',
-                            headers: {
-                                cache: 'no-store',
-                                'cache-control': 'no-cache',
-                            },
-                        });
-
-                        console.log('Подгрузили SW', resp);
-
-                        if (resp?.status === 200) {
-                            console.log('Прошли проверку статуса загрузки sw и обновили registration');
-
-                            await registration.update();
-
-                            console.log('Регистрация SW', registration);
-                            console.log('Статус SW', registration.waiting);
-
-                            await waitForWaitingSW(registration);
-
-                            await registration.updateServiceWorker();
-                            const keys = await caches.keys();
-                            await Promise.all(keys.map((k) => caches.delete(k)));
-                            // eslint-disable-next-line no-restricted-globals
-                            location.reload();
-                        }
-                    } catch (e) {
-                        console.log('Ошибка при initial update-check', e)
-                    }
-                })()
-
+                // (async () => {
+                //     try {
+                //         console.log('Попытка обновления приложения при ините');
+                //
+                //         const resp = await fetch(swUrl, {
+                //             cache: 'no-store',
+                //             headers: {
+                //                 cache: 'no-store',
+                //                 'cache-control': 'no-cache',
+                //             },
+                //         });
+                //
+                //         console.log('Подгрузили SW', resp);
+                //
+                //         if (resp?.status === 200) {
+                //             console.log('Прошли проверку статуса загрузки sw и обновили registration');
+                //
+                //             await registration.update();
+                //
+                //             console.log('Регистрация SW', registration);
+                //             console.log('Статус SW', registration.waiting);
+                //
+                //             await waitForWaitingSW(registration);
+                //
+                //             await registration.updateServiceWorker();
+                //             const keys = await caches.keys();
+                //             await Promise.all(keys.map((k) => caches.delete(k)));
+                //             // eslint-disable-next-line no-restricted-globals
+                //             location.reload();
+                //         }
+                //     } catch (e) {
+                //         console.log('Ошибка при initial update-check', e)
+                //     }
+                // })()
 
                 setInterval(async () => {
                     try {
