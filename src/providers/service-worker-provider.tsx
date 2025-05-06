@@ -18,6 +18,34 @@ export function useServiceWorkerRegistration() {
     return useContext(ServiceWorkerRegistrationContext);
 }
 
+async function waitForWaitingSW(registration: ServiceWorkerRegistration): Promise<void> {
+    if (registration.waiting) {
+        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        return Promise.resolve();
+    }
+
+    return new Promise<void>((resolve) => {
+        const onUpdateFound = () => {
+            const newSW = registration.installing;
+            if (!newSW) {
+                return;
+            }
+            newSW.addEventListener('statechange', () => {
+                if (newSW.state === 'installed' && registration.waiting) {
+                    registration.waiting!.postMessage({ type: 'SKIP_WAITING' });
+                    resolve();
+                }
+            });
+        };
+
+        registration.addEventListener('updatefound', onUpdateFound);
+
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            resolve();
+        });
+    });
+}
+
 /**
  * Представляет компонент, создающий контекст состояния для управления service worker.
  */
@@ -30,13 +58,48 @@ export function ServiceWorkerProvider(props: PropsWithChildren) {
             console.log('Ошибка в работе ServiceWorker.', err)
         },
         // @ts-ignore
-        onRegisteredSW(swUrl, r) {
-            if (r) {
+        onRegisteredSW(swUrl, registration) {
+            if (registration) {
+                (async () => {
+                    try {
+                        console.log('Попытка обновления приложения при ините');
+
+                        const resp = await fetch(swUrl, {
+                            cache: 'no-store',
+                            headers: {
+                                cache: 'no-store',
+                                'cache-control': 'no-cache',
+                            },
+                        });
+
+                        console.log('Подгрузили SW', resp);
+
+                        if (resp?.status === 200) {
+                            console.log('Прошли проверку статуса загрузки sw и обновили registration');
+
+                            await registration.update();
+
+                            console.log('Регистрация SW', registration);
+                            console.log('Статус SW', registration.waiting);
+
+                            await waitForWaitingSW(registration);
+
+                            const keys = await caches.keys();
+                            await Promise.all(keys.map((k) => caches.delete(k)));
+                            // eslint-disable-next-line no-restricted-globals
+                            location.reload();
+                        }
+                    } catch (e) {
+                        console.log('Ошибка при initial update-check', e)
+                    }
+                })()
+
+
                 setInterval(async () => {
                     try {
                         // Код взят из мануала https://vite-pwa-org.netlify.app/guide/periodic-sw-updates.html.
                         // Удален фрагмент с проверкой подключения.
-                        if (r.installing || !navigator) {
+                        if (registration.installing || !navigator) {
                             return;
                         }
 
@@ -53,7 +116,7 @@ export function ServiceWorkerProvider(props: PropsWithChildren) {
                         });
 
                         if (resp?.status === 200) {
-                            await r.update();
+                            await registration.update();
                         }
                     } catch (e) {
                         console.log('Произошла ошибка при проверке наличия новой версий приложения', e)
