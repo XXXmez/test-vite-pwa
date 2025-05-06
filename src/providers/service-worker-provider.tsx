@@ -7,7 +7,7 @@ type RegisterSwState = ReturnType<typeof useRegisterSW>;
 /**
  * Интервал проверки наличия новой версии приложения.
  */
-const SW_UPDATE_CHECK_INTERVAL = 60 * 1000;
+const SW_UPDATE_CHECK_INTERVAL = 20 * 1000;
 
 const ServiceWorkerRegistrationContext = createContext<RegisterSwState | null>(null);
 
