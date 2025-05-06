@@ -84,6 +84,7 @@ export function ServiceWorkerProvider(props: PropsWithChildren) {
 
                             await waitForWaitingSW(registration);
 
+                            await registration.updateServiceWorker();
                             const keys = await caches.keys();
                             await Promise.all(keys.map((k) => caches.delete(k)));
                             // eslint-disable-next-line no-restricted-globals
