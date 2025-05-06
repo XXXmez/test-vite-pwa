@@ -18,33 +18,33 @@ export function useServiceWorkerRegistration() {
     return useContext(ServiceWorkerRegistrationContext);
 }
 
-async function waitForWaitingSW(registration: ServiceWorkerRegistration): Promise<void> {
-    if (registration.waiting) {
-        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-        return Promise.resolve();
-    }
-
-    return new Promise<void>((resolve) => {
-        const onUpdateFound = () => {
-            const newSW = registration.installing;
-            if (!newSW) {
-                return;
-            }
-            newSW.addEventListener('statechange', () => {
-                if (newSW.state === 'installed' && registration.waiting) {
-                    registration.waiting!.postMessage({ type: 'SKIP_WAITING' });
-                    resolve();
-                }
-            });
-        };
-
-        registration.addEventListener('updatefound', onUpdateFound);
-
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-            resolve();
-        });
-    });
-}
+// async function waitForWaitingSW(registration: ServiceWorkerRegistration): Promise<void> {
+//     if (registration.waiting) {
+//         registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+//         return Promise.resolve();
+//     }
+//
+//     return new Promise<void>((resolve) => {
+//         const onUpdateFound = () => {
+//             const newSW = registration.installing;
+//             if (!newSW) {
+//                 return;
+//             }
+//             newSW.addEventListener('statechange', () => {
+//                 if (newSW.state === 'installed' && registration.waiting) {
+//                     registration.waiting!.postMessage({ type: 'SKIP_WAITING' });
+//                     resolve();
+//                 }
+//             });
+//         };
+//
+//         registration.addEventListener('updatefound', onUpdateFound);
+//
+//         navigator.serviceWorker.addEventListener('controllerchange', () => {
+//             resolve();
+//         });
+//     });
+// }
 
 /**
  * Представляет компонент, создающий контекст состояния для управления service worker.
