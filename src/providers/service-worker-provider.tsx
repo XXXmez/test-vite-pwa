@@ -19,53 +19,61 @@ export function useServiceWorkerRegistration() {
     return useContext(ServiceWorkerRegistrationContext);
 }
 
-async function checkingAppVersionByInit(swUrl: string, registration: ServiceWorkerRegistration) {
-    try {
-        console.log('Проверка обновлений при старте приложения');
+async function checkingAppVersionByInit(swUrl: string, registration: ServiceWorkerRegistration): Promise<void> {
+    return new Promise<void>(async (resolve) => {
+        try {
+            console.log('Проверка обновлений при старте приложения');
 
-        const resp = await fetch(swUrl, {
-            cache: 'no-store',
-            headers: {
+            const resp = await fetch(swUrl, {
                 cache: 'no-store',
-                'cache-control': 'no-cache',
-            },
-        });
+                headers: {
+                    cache: 'no-store',
+                    'cache-control': 'no-cache',
+                },
+            });
 
-        if (resp?.status === 200) {
-            await registration.update();
+            if (resp?.status === 200) {
+                await registration.update();
 
-            if (registration.waiting) {
-                console.log('Обновление уже доступно, активируем его');
-                registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-                await caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key))));
-                window.location.reload();
-                return;
-            }
+                if (registration.waiting) {
+                    console.log('Обновление уже доступно, активируем его');
+                    registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                    await caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key))));
+                    window.location.reload();
+                    // Не вызываем resolve(), Promise остается pending для того, что бы отображать индикацию загрузки во время обновления.
+                    return;
+                }
 
-            if (registration.installing) {
-                console.log('Установка нового сервис-воркера в процессе, ждем завершения');
-                await new Promise<void>((resolve) => {
-                    registration.installing?.addEventListener('statechange', (event) => {
-                        const target = event.target as ServiceWorker | null;
-                        console.log('event', event);
-                        console.log('target', target);
-
-                        if (target?.state === 'installed' && registration.waiting) {
-                            console.log('Новый сервис-воркер установлен, активируем его');
-                            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-                            resolve();
-                        }
+                // Если сервис-воркер устанавливается
+                if (registration.installing) {
+                    console.log('Установка нового сервис-воркера в процессе, ждем завершения');
+                    await new Promise<void>((innerResolve) => {
+                        registration.installing?.addEventListener('statechange', (event) => {
+                            const target = event.target as ServiceWorker | null;
+                            if (target?.state === 'installed' && registration.waiting) {
+                                console.log('Новый сервис-воркер установлен, активируем его');
+                                registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                                innerResolve();
+                            }
+                        });
                     });
-                });
-                await caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key))));
-                window.location.reload();
-                return;
+                    await caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key))));
+                    window.location.reload();
+                    // Не вызываем resolve(), Promise остается pending для того, что бы отображать индикацию загрузки во время обновления.
+                    return;
+                }
+
+                console.log('Обновление не требуется');
+                resolve();
+
+            } else {
+                resolve();
             }
-            console.log('Обновление не требуется');
+        } catch (error) {
+            console.error('Возникла ошибка при проверке обновления при старте приложения:', error);
+            resolve()
         }
-    } catch (error) {
-        console.error('Возникла ошибка при проверке обновления при старте приложения:', error);
-    }
+    })
 }
 
 /**
@@ -84,6 +92,7 @@ export function ServiceWorkerProvider(props: PropsWithChildren) {
         onRegisteredSW(swUrl, registration) {
             if (registration) {
                 checkingAppVersionByInit(swUrl, registration).finally(() => {
+                    console.log("КОНЕЦ ЗАГРУЗКИ")
                     setIsCheckingUpdate(false)
                 })
 
@@ -131,7 +140,7 @@ export function ServiceWorkerProvider(props: PropsWithChildren) {
         setOpenUpdateNotification(false);
     };
 
-    console.log('isCheckingUpdate', isCheckingUpdate)
+    console.log('>>>>>>> isCheckingUpdate', isCheckingUpdate)
 
     return (
         <ServiceWorkerRegistrationContext.Provider value={sw}>
