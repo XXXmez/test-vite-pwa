@@ -2,6 +2,7 @@ import React, { createContext, PropsWithChildren, useContext, useEffect } from '
 // @ts-ignore
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import {UpdateAppButton} from "../update-app-button.tsx";
+import {Show} from "../components/show";
 type RegisterSwState = ReturnType<typeof useRegisterSW>;
 
 /**
@@ -17,56 +18,6 @@ const ServiceWorkerRegistrationContext = createContext<RegisterSwState | null>(n
 export function useServiceWorkerRegistration() {
     return useContext(ServiceWorkerRegistrationContext);
 }
-
-// async function checkingAppVersionByInit(swUrl: string, registration: ServiceWorkerRegistration) {
-//     try {
-//         console.log('Проверка обновлений при старте приложения');
-//         const resp = await fetch(swUrl, {
-//             cache: 'no-store',
-//             headers: {
-//                 cache: 'no-store',
-//                 'cache-control': 'no-cache',
-//             },
-//         });
-//
-//         if (resp?.status === 200) {
-//             await registration.update();
-//
-//             if (registration.waiting) {
-//                 console.log('Обновление уже доступно, активируем его');
-//                 registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-//                 await caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key))));
-//                 window.location.reload();
-//                 return;
-//             }
-//             if (registration.installing) {
-//                 console.log('Установка нового сервис-воркера в процессе, ждем завершения');
-//                 await new Promise((resolve) => {
-//                     registration.installing?.addEventListener('statechange', (event) => {
-//
-//                         console.log('event', event)
-//                         console.log('event.target', event.target)
-//                         // @ts-ignore
-//                         console.log('event.target?.state', event.target?.state)
-//                         // @ts-ignore
-//                         if (event.target?.state === 'installed' && registration.waiting) {
-//                             console.log('Новый сервис-воркер установлен, активируем его');
-//                             registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-//                             // @ts-ignore
-//                             resolve();
-//                         }
-//                     });
-//                 });
-//                 await caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key))));
-//                 window.location.reload();
-//                 return;
-//             }
-//             console.log('Обновление не требуется');
-//         }
-//     } catch (e) {
-//         console.error('Ошибка при проверке обновлений при старте приложения:', e);
-//     }
-// }
 
 async function checkingAppVersionByInit(swUrl: string, registration: ServiceWorkerRegistration) {
     try {
@@ -121,6 +72,7 @@ async function checkingAppVersionByInit(swUrl: string, registration: ServiceWork
  * Представляет компонент, создающий контекст состояния для управления service worker.
  */
 export function ServiceWorkerProvider(props: PropsWithChildren) {
+    const [isCheckingUpdate, setIsCheckingUpdate] = React.useState(true);
     const [isOpenUpdateNotification, setOpenUpdateNotification] = React.useState(false);
 
     const sw = useRegisterSW({
@@ -131,7 +83,9 @@ export function ServiceWorkerProvider(props: PropsWithChildren) {
         // @ts-ignore
         onRegisteredSW(swUrl, registration) {
             if (registration) {
-                checkingAppVersionByInit(swUrl, registration).then()
+                checkingAppVersionByInit(swUrl, registration).finally(() => {
+                    setIsCheckingUpdate(false)
+                })
 
                 setInterval(async () => {
                     try {
@@ -177,12 +131,16 @@ export function ServiceWorkerProvider(props: PropsWithChildren) {
         setOpenUpdateNotification(false);
     };
 
+    console.log('isCheckingUpdate', isCheckingUpdate)
+
     return (
         <ServiceWorkerRegistrationContext.Provider value={sw}>
-            {props.children}
-            {needRefresh && isOpenUpdateNotification && (
-                <div onClick={() => handleCloseUpdateNotification()} style={{position:'absolute', top:0, left:0}}>Обновите страницу (F5) для использования актуальной версии. <UpdateAppButton /></div>
-            )}
+            <Show when={!isCheckingUpdate}>
+                {props.children}
+                {needRefresh && isOpenUpdateNotification && (
+                    <div onClick={() => handleCloseUpdateNotification()} style={{position:'absolute', top:0, left:0}}>Обновите страницу (F5) для использования актуальной версии. <UpdateAppButton /></div>
+                )}
+            </Show>
         </ServiceWorkerRegistrationContext.Provider>
     );
 }
